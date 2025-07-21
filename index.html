@@ -42,36 +42,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Básica</title>
+    <title>Juego de Pong</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
+            text-align: center;
+        }
+        canvas {
+            background-color: black;
+            border: 2px solid #333;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1 {
             color: #333;
+            margin-bottom: 10px;
         }
         p {
-            line-height: 1.6;
             color: #666;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenido a mi página</h1>
-        <p>Esta es una página web básica creada con HTML y CSS.</p>
-        <p>Puedes personalizar este contenido según tus necesidades.</p>
+        <h1>Juego de Pong</h1>
+        <p>Controles: Jugador 1 (Izquierda) - W (arriba), S (abajo)<br>Jugador 2 (Derecha) - Flecha Arriba, Flecha Abajo</p>
+        <canvas id="pongCanvas" width="800" height="400"></canvas>
     </div>
-</body>
-</html>
+    <script>
+        const canvas = document.getElementById('pongCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Configuración del juego
+        const paddleWidth = 10;
+        const paddleHeight = 60;
+        const ballSize = 10;
+        let paddle1Y = canvas.height / 2 - paddleHeight / 2;
+        let paddle2Y = canvas.height / 2 - paddleHeight / 2;
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height / 2;
+        let ballSpeedX = 5;
+        let ballSpeedY = 5;
+        let score1 = 0;
+        let score2 = 0;
+
+        // Controles de las paletas
+        let upPressed1 = false;
+        let downPressed1 = false;
+        let upPressed2 = false;
+        let downPressed2 = false;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'w' || e.key === 'W') upPressed1 = true;
+            if (e.key === 's' || e.key === 'S') downPressed1 = true;
+            if (e.key === 'ArrowUp') upPressed2 = true;
+            if (e.key === 'ArrowDown') downPressed2 = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'w' || e.key === 'W') upPressed1 = false;
+            if (e.key === 's' || e.key === 'S') downPressed1 = false;
+            if (e.key === 'ArrowUp') upPressed2 = false;
+            if (e.key === 'ArrowDown') downPressed2 = false;
+        });
+
+        // Dibujar elementos
+        function draw() {
+            // Limpiar canvas
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar paletas
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, paddle1Y, paddleWidth, paddleHeight);
+            ctx.fillRect(canvas.width - paddleWidth, paddle2Y, paddleWidth, paddleHeight);
+
+            // Dibujar bola
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, ballSize / 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.closePath();
+
+            // Dibujar puntajes
+            ctx.font = '24px Arial';
+            ctx.fillText(score1, canvas.width / 4, 50);
+            ctx.fillText(score2, 3 * canvas.width / 4, 50);
+        }
+
+        // Actualizar posiciones
+        function update() {
+            // Mover paletas
+            if (upPressed
